@@ -1,0 +1,2 @@
+../Src/gpio.c:16:6:gpio_write	2
+../Src/gpio.c:28:6:gpio_init	1
