@@ -32,3 +32,4 @@ void gpio_init(uint16_t pin, MODE mode)
 	gpio[PINPORT(pin)]->MODER &= ~(3 << PINNO(pin) * 2); //clearing MODER
 	gpio[PINPORT(pin)]->MODER |= mode << (PINNO(pin) * 2); //setting MODER to mode
 }
+
