@@ -37,9 +37,11 @@ void attachInterrupt(uint16_t pin, void (*func)(), EDGE edge)
 	{
 		case RISING:
 			EXTI->RTSR |= 1 << line; //Activating rising Edge for the pins with the number {line}.
+			EXTI->FTSR &= ~(1 << line);
 			break;
 		case FALLING:
 			EXTI->FTSR |= 1 << line;
+			EXTI->RTSR&= ~(1 << line);
 			break;
 	}
 
@@ -85,14 +87,14 @@ void detachInterrupt(uint16_t pin)
 
 void HandleExti(uint16_t exti)
 {
-	if((unsigned long)(millis - tiStart[exti]) > 50) //Debounce
+	if(EXTI->PR & (1 << exti))
 	{
-		if(EXTI->PR & (1 << exti))
+		EXTI->PR |= (1 << exti);
+		if((unsigned long)(millis - tiStart[exti]) > 500) //Debounce
 		{
+			tiStart[exti] = millis;
 			userInterruptFunc[exti]();
-			EXTI->PR = (1 << exti); //Reset Interrupt
 		}
-		tiStart[exti] = millis;
 	}
 }
 
