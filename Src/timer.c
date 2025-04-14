@@ -11,9 +11,6 @@
 
 volatile unsigned long millis = 0;
 
-
-
-
 void init_Timer()
 {
 	RCC_APB1ENR |= 1; //sets TIM2 active

@@ -8,8 +8,11 @@
 #include <stdint.h>
 #include "interrupt.h"
 #include "gpio.h"
+#include "timer.h"
 
 void (*userInterruptFunc[16])(void) = {0};
+
+unsigned long tiStart[16] = {0}; //Timer Interrupt start for every EXTI
 
 EXTI_TYPE *EXTI = (EXTI_TYPE *) (EXTI_BASE);
 SYSCFG_TYPE *SYSCFG = (SYSCFG_TYPE *) (SYSCFG_BASE);
@@ -17,7 +20,7 @@ SYSCFG_TYPE *SYSCFG = (SYSCFG_TYPE *) (SYSCFG_BASE);
 void NVIC_EnableIRQ(uint8_t IRQn)
 {
     volatile uint32_t *ISER = (volatile uint32_t *)(NVIC_ISER_BASE + (IRQn / 32) * 4);
-    *ISER = (1 << (IRQn % 32)); // Aktivates the Interrupt
+    *ISER = (1 << (IRQn % 32)); // Activates the Interrupt
 }
 
 void attachInterrupt(uint16_t pin, void (*func)(), EDGE edge)
@@ -33,7 +36,7 @@ void attachInterrupt(uint16_t pin, void (*func)(), EDGE edge)
 	switch(edge)
 	{
 		case RISING:
-			EXTI->RTSR |= 1 << line; //Activating rising Edge for the pins with number line.
+			EXTI->RTSR |= 1 << line; //Activating rising Edge for the pins with the number {line}.
 			break;
 		case FALLING:
 			EXTI->FTSR |= 1 << line;
@@ -79,92 +82,54 @@ void detachInterrupt(uint16_t pin)
 	EXTI->IMR &= ~(1 << line);
 	SYSCFG->EXTICR[line/4] &= ~(15 << ((line%4) * 4));
 }
+
+void HandleExti(uint16_t exti)
+{
+	if((unsigned long)(millis - tiStart[exti]) > 50) //Debounce
+	{
+		if(EXTI->PR & (1 << exti))
+		{
+			userInterruptFunc[exti]();
+			EXTI->PR = (1 << exti); //Reset Interrupt
+		}
+		tiStart[exti] = millis;
+	}
+}
+
+
 void EXTI0_IRQHandler()
 {
-	userInterruptFunc[0]();
-	EXTI->PR &= ~(1);
+	HandleExti(0);
 }
 void EXTI1_IRQHandler()
 {
-	userInterruptFunc[1]();
-	EXTI->PR &= ~(1 << 1);
+	HandleExti(1);
 }
 void EXTI2_IRQHandler()
 {
-	userInterruptFunc[2]();
-	EXTI->PR &= ~(1 << 2);
+	HandleExti(2);
 }
 void EXTI3_IRQHandler()
 {
-	userInterruptFunc[3]();
-	EXTI->PR &= ~(1 << 3);
+	HandleExti(3);
 }
 void EXTI4_IRQHandler()
 {
-	userInterruptFunc[4]();
-	EXTI->PR &= ~(1 << 4);
+	HandleExti(4);
 }
 void EXTI9_5_IRQHandler() //EXTI5-9
 {
-	//Check which EXTI triggered
-	if(EXTI->PR & (1 << 5))
+	for(int i = 5; i < 10; i++)
 	{
-		userInterruptFunc[5]();
-		EXTI->PR &= ~(1 << 5);
-	}
-	if(EXTI->PR & (1<<6))
-	{
-		userInterruptFunc[6]();
-		EXTI->PR &= ~(1 << 6);
-	}
-	if(EXTI->PR & (1<<7))
-	{
-		userInterruptFunc[7]();
-		EXTI->PR &= ~(1 << 7);
-	}
-	if(EXTI->PR & (1<<8))
-	{
-		userInterruptFunc[8]();
-		EXTI->PR &= ~(1 << 8);
-	}
-	if(EXTI->PR & (1<<9))
-	{
-		userInterruptFunc[9]();
-		EXTI->PR &= ~(1 << 9);
+		HandleExti(i);
 	}
 }
 
 void EXTI15_10_IRQHandler() //EXTI10-15
 {
-	if(EXTI->PR & (1 << 10))
+	for(int i = 10; i < 16; i++)
 	{
-		userInterruptFunc[10]();
-		EXTI->PR &= ~(1 << 10);
-	}
-	if(EXTI->PR & (1<<11))
-	{
-		userInterruptFunc[11]();
-		EXTI->PR &= ~(1 << 11);
-	}
-	if(EXTI->PR & (1<<12))
-	{
-		userInterruptFunc[12]();
-		EXTI->PR &= ~(1 << 12);
-	}
-	if(EXTI->PR & (1<<13))
-	{
-		userInterruptFunc[13]();
-		EXTI->PR &= ~(1 << 13);
-	}
-	if(EXTI->PR & (1<<14))
-	{
-		userInterruptFunc[14]();
-		EXTI->PR &= ~(1 << 14);
-	}
-	if(EXTI->PR & (1<<15))
-	{
-		userInterruptFunc[15]();
-		EXTI->PR &= ~(1 << 15);
+		HandleExti(i);
 	}
 }
 

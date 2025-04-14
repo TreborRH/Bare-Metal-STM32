@@ -1,12 +1,13 @@
 #include "gpio.h"
-#include "timer.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include "interrupt.h"
+#include "timer.h"
 volatile bool isLED = true;
 uint16_t pin = PIN('C', 9);
-uint16_t pinExt = PIN('D', 2);
-volatile void ISR()
+uint16_t pinExt = PIN('A', 0);
+
+void ISR()
 {
 	gpio_write(pin, isLED);
 	isLED = !isLED;
@@ -14,20 +15,14 @@ volatile void ISR()
 
 int main(void)
 {
-
-
 	gpio_init(pin, OUTPUT);
-	init_Timer();
-
-
 	gpio_init(pinExt, INPUT);
+	init_Timer();
 	attachInterrupt(pinExt, ISR, RISING);
-
 	for(;;)
 	{
-
 	}
-
-
 }
+
+
 

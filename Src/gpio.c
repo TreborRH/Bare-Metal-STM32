@@ -39,7 +39,7 @@ void gpio_init(uint16_t pin, MODE mode)
 	if (mode == INPUT)
 	{
 		gpio[PINPORT(pin)]->PUPDR &= ~(3 << (PINNO(pin) * 2));  // Clear previous settings
-		gpio[PINPORT(pin)]->PUPDR |= (1 << (PINNO(pin) * 2));     // Set Pull-Down (2)
+		gpio[PINPORT(pin)]->PUPDR |= (2 << (PINNO(pin) * 2));     // Set Pull-Down (2)
 	}
 }
 
