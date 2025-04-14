@@ -2,29 +2,32 @@
 #include "timer.h"
 #include <stdint.h>
 #include <stdbool.h>
-
+#include "interrupt.h"
+volatile bool isLED = true;
+uint16_t pin = PIN('C', 9);
+uint16_t pinExt = PIN('D', 2);
+volatile void ISR()
+{
+	gpio_write(pin, isLED);
+	isLED = !isLED;
+}
 
 int main(void)
 {
-	unsigned long startTime = 0;
-	uint16_t pin = PIN('C', 9);
+
 
 	gpio_init(pin, OUTPUT);
-	bool isLed = false;
-
-
-	isLed = !isLed;
-	gpio_write(pin, isLed);
-
 	init_Timer();
+
+
+	gpio_init(pinExt, INPUT);
+	attachInterrupt(pinExt, ISR, RISING);
 
 	for(;;)
 	{
-		if(millis - startTime > 1000)
-		{
-			startTime = millis;
-			isLed = !isLed;
-			gpio_write(pin, isLed);
-		}
+
 	}
+
+
 }
+

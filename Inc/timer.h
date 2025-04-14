@@ -19,4 +19,6 @@ extern volatile unsigned long millis;
 #define TIM2_CR1	(*(volatile uint32_t*) 0x40000000)
 #define TIM2_SR		(*(volatile uint32_t*) 0x40000010)
 
+void init_Timer();
+
 #endif /* TIMER_H_ */

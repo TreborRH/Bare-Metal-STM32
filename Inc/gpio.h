@@ -34,6 +34,8 @@ typedef enum MODE
 
 void gpio_write(uint16_t, bool);
 
+int gpio_read(uint16_t);
+
 void gpio_init(uint16_t, MODE);
 
 extern struct GPIO *gpio[];

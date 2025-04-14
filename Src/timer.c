@@ -7,15 +7,10 @@
 
 #include "timer.h"
 
+#include "interrupt.h"
+
 volatile unsigned long millis = 0;
 
-#define NVIC_ISER_BASE 0xE000E100 // Basisadresse des ISER
-
-void NVIC_EnableIRQ(uint8_t IRQn)
-{
-    volatile uint32_t *ISER = (volatile uint32_t *)(NVIC_ISER_BASE + (IRQn / 32) * 4);
-    *ISER = (1 << (IRQn % 32)); // Aktiviert den Interrupt
-}
 
 
 
