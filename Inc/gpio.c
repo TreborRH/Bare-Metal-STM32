@@ -18,11 +18,11 @@ void gpio_write(uint16_t pin , bool val)
 
 	if(val)
 	{
-		gpio[PINPORT(pin)]->BSRR = 1 << PINNO(pin);
+		gpio[PINPORT(pin)]->BSRR = 1 << PINNO(pin); //Setting Pin to HIGH
 	}
 	else
 	{
-		gpio[PINPORT(pin)]->BSRR = 1 << (PINNO(pin) + 16);
+		gpio[PINPORT(pin)]->BSRR = 1 << (PINNO(pin) + 16); //Setting PIN to LOW
 	}
 }
 int gpio_read(uint16_t pin)

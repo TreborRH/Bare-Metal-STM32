@@ -1,8 +1,6 @@
-#include "gpio.h"
+#include <thertos.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "interrupt.h"
-#include "timer.h"
 volatile bool isLED = true;
 uint16_t pin = PIN('C', 9);
 uint16_t pinExt = PIN('A', 0);

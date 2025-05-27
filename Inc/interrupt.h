@@ -10,7 +10,10 @@
 
 #define NVIC_ISER_BASE 0xE000E100 //adress of ISER
 #define EXTI_BASE 0x40010400
+
 #define SYSCFG_BASE 0x40010000
+
+#define DEBOUNCETIME 100
 
 typedef struct
 {

@@ -90,7 +90,7 @@ void HandleExti(uint16_t exti)
 	if(EXTI->PR & (1 << exti))
 	{
 		EXTI->PR |= (1 << exti);
-		if((unsigned long)(millis - tiStart[exti]) > 500) //Debounce
+		if((unsigned long)(millis - tiStart[exti]) >= DEBOUNCETIME) //Debounce
 		{
 			tiStart[exti] = millis;
 			userInterruptFunc[exti]();
