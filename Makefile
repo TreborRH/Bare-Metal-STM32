@@ -19,7 +19,7 @@ LDSCRIPT = STM32L152RETX_FLASH.ld
 # Flags
 CFLAGS = -mcpu=$(MCU) -mthumb -O2 -Wall $(DEFS) $(INCLUDES)
 AFLAGS = -mcpu=$(MCU) -mthumb
-LDFLAGS = -T$(LDSCRIPT) -nostartfiles -mcpu=$(MCU) -mthumb
+LDFLAGS = -T$(LDSCRIPT) -mcpu=$(MCU) -mthumb
 
 TARGET = Bare-Metal-STM32
 
